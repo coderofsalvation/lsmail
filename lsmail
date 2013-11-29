@@ -1,0 +1,34 @@
+#!/bin/bash 
+
+MY_PATH="$(dirname $(readlink -f "$0") )"
+NLATESTEMAILS=10
+
+getOverview(){
+  $MY_PATH/imapmunch "$1" -ALL | head -n$NLATESTEMAILS
+}
+
+console(){
+  while [[ true ]]; do 
+    echo ""; read -p "lsmail> " emailno
+    $MY_PATH/imapmunch "$1" $emailno | more; sleep 0.2s; 
+  done
+}
+
+getOverviews(){
+  IFS=''; ls ~/.lsmail.* | while read inifile; do printf "\n[ %s ]\n\n" "$(echo "$inifile" | sed 's/.*lsmail\.//g')"; getOverview "$inifile"; done; 
+}
+
+# if inifile exist show overview of that mailbox (without second arg)
+if [[ -f ~/".lsmail.$1" ]] && [[ ! -n "$2" ]]; then 
+  getOverview  ~/".lsmail.$1"; console ~/".lsmail.$1"
+
+# if 1st rgument is email and second a number, view email of that emailbox 
+elif [[ "$1" =~ "@" ]] && [[ -n "$2" ]]; then 
+  $MY_PATH/lsmail "$1" "$2"
+
+# if no argument given show overviews of all mailboxes
+elif [[ ! -n "$1" ]]; then 
+  getOverviews 
+  echo ""; read -p "lsmail> " cmd
+  $MY_PATH/lsmail ${cmd}
+fi
