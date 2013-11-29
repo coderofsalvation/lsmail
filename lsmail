@@ -8,7 +8,7 @@ getOverview(){
 }
 
 console(){
-  while [[ true ]]; do 
+  while [[ true ]] && [[ ! -n $SILENT ]]; do 
     echo ""; read -p "lsmail> " emailno
     $MY_PATH/imapmunch "$1" $emailno | more; sleep 0.2s; 
   done
@@ -29,6 +29,7 @@ elif [[ "$1" =~ "@" ]] && [[ -n "$2" ]]; then
 # if no argument given show overviews of all mailboxes
 elif [[ ! -n "$1" ]]; then 
   getOverviews 
+  [[ -n $SILENT ]] && exit
   echo ""; read -p "lsmail> " cmd
   $MY_PATH/lsmail ${cmd}
 fi

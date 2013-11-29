@@ -1,0 +1,23 @@
+#!/bin/bash 
+#
+# Usage: lsmail-xnotify your@email.com
+#
+# or in crontab: 0/4 * * * /home/yourname/bin/lsmail-xnotify your@email.com
+#
+TMPFILE="/tmp/.lsmail-$(whoami)"
+EMAIL="$1"
+
+getid(){
+  cat - | sed 's/ .*//g'
+}
+
+checkmail(){
+  cache="$([[ -f $TMPFILE.cache ]] && cat $TMPFILE.cache)"; :> $TMPFILE.new; :> $TMPFILE.cache
+  SILENT=1 lsmail "lk@billypds.com" 2>/dev/null | while read line; do 
+    id=$(echo "$line" | getid); msg="$(echo "$line" | sed 's/.*[0-9][0-9]:[0-9][0-9]:[0-9][0-9] //g' )"
+    [[ "$id " =~ "$cache" ]] && [[ ! "$msg" =~ " $EMAIL" ]] && DISPLAY=:0.0 notify-send -t 5000 -c "$EMAIL" -a "$EMAIL" "$msg" && sleep 4s
+    echo $id >> $TMPFILE.cache
+  done 
+}
+
+checkmail
