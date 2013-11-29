@@ -75,6 +75,9 @@ CREDITS: [imapmunch](https://gist.github.com/coderofsalvation/4604003)
     cp imapmunch lsmail ~/bin/.
     cp ~/.lsmail.my@example.com ~/.lsmail.my@gmail.com 
     # now modify ~/.lsmail.my@gmail.com 
+    (..)
+    # set permissions
+    chmod 600 ~/.lsmail.*
 
 ### Note ###
 
